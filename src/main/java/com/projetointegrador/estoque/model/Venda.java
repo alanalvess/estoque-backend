@@ -38,20 +38,6 @@ public class Venda {
     @JsonIgnoreProperties("venda")
     private List<VendaItem> itens = new ArrayList<>();
 
-    public void adicionarItem(VendaItem item) {
-        this.itens.add(item);
-    }
-
-    public void removerItem(Long itemId) {
-        this.itens.removeIf(item -> item.getId().equals(itemId));
-    }
-
-    public void calcularTotal() {
-        this.total = itens.stream()
-                .map(VendaItem::calcularSubtotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
     public Venda(VendaDTO dto) {
         this.id = dto.id();
         this.dataVenda = dto.dataVenda();

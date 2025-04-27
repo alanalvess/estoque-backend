@@ -149,7 +149,6 @@ public class ProdutoService {
         if (dto.valor() != null) produto.setValor(dto.valor());
         if (dto.quantidade() != null) produto.setQuantidade(dto.quantidade());
 
-        // Validação da disponibilidade
         if (dto.disponivel() != null) {
             Integer quantidadeAtualizada = dto.quantidade() != null ? dto.quantidade() : produto.getQuantidade();
             if (dto.disponivel() && (quantidadeAtualizada == null || quantidadeAtualizada <= 0)) {

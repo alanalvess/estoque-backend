@@ -40,13 +40,6 @@ public class VendaItem {
 
     private BigDecimal total = BigDecimal.ZERO;
 
-
-    public BigDecimal calcularSubtotal() {
-        total = valor.multiply(BigDecimal.valueOf(quantidade));
-        return total;
-    }
-
-
     public VendaItem(VendaItemDTO dto) {
         this.id = dto.id();
         this.produto = dto.produto();

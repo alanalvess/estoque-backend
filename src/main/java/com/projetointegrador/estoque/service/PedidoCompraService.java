@@ -63,25 +63,8 @@ public class PedidoCompraService {
         return atualizar(id, dto);
     }
 
-
     public void deletar(Long id) {
         if (!pedidoCompraRepository.existsById(id)) ;
         pedidoCompraRepository.deleteById(id);
-    }
-
-    public void adicionarEstoque(Long id, PedidoItem item) {
-        PedidoCompra pedidoCompra = pedidoCompraRepository.findById(id)
-                .orElseThrow();
-
-        pedidoCompra.adicionarItem(item);
-        pedidoCompraRepository.save(pedidoCompra);
-    }
-
-    public void removerEstoque(Long id, PedidoItem item) {
-        PedidoCompra pedidoCompra = pedidoCompraRepository.findById(id)
-                .orElseThrow();
-
-        pedidoCompra.removerItem(item.getId());
-        pedidoCompraRepository.save(pedidoCompra);
     }
 }

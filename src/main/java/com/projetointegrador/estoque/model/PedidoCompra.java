@@ -48,18 +48,4 @@ public class PedidoCompra {
         this.status = dto.status();
         this.total = dto.total();
     }
-
-    public void adicionarItem(PedidoItem item) {
-        this.itens.add(item);
-    }
-
-    public void removerItem(Long itemId) {
-        this.itens.removeIf(item -> item.getId().equals(itemId));
-    }
-
-    public void calcularTotal() {
-        this.total = itens.stream()
-                .map(PedidoItem::calcularSubtotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
 }

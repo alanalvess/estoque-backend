@@ -35,16 +35,12 @@ public class Cliente {
     @Column(unique = true)
     private String email;
 
-    @NotBlank(message = "O telefone é obrigatório!")
+    @Column(unique = true)
     private String telefone;
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("cliente")
     private List<Venda> vendas;
-
-    public List<Venda> listarCompras() {
-        return vendas;
-    }
 
     public Cliente(ClienteDTO dto) {
         this.id = dto.id();

@@ -44,7 +44,6 @@ public class PedidoItemService {
         PedidoItem pedidoItem = pedidoItemRepository.findById(id)
                 .orElseThrow();
 
-        pedidoItem.atualizar(dto);
         pedidoItemRepository.save(pedidoItem);
 
         return new PedidoItemDTO(pedidoItem.getId(), pedidoItem.getProduto(), pedidoItem.getQuantidade(), pedidoItem.getValor());

@@ -19,20 +19,41 @@ public class VendaItemService {
     public List<VendaItemDTO> listarTodos() {
         return vendaItemRepository.findAll()
                 .stream()
-                .map(vendaItem -> new VendaItemDTO(vendaItem.getId(), vendaItem.getVenda(), vendaItem.getProduto(), vendaItem.getQuantidade(), vendaItem.getValor(), vendaItem.calcularSubtotal()))
+                .map(vendaItem -> new VendaItemDTO(
+                        vendaItem.getId(),
+                        vendaItem.getVenda(),
+                        vendaItem.getProduto(),
+                        vendaItem.getQuantidade(),
+                        vendaItem.getValor(),
+                        vendaItem.getTotal()
+                ))
                 .toList();
     }
 
     public VendaItemDTO buscarPorId(Long id) {
         VendaItem vendaItem = vendaItemRepository.findById(id)
                 .orElseThrow();
-        return new VendaItemDTO(vendaItem.getId(), vendaItem.getVenda(), vendaItem.getProduto(), vendaItem.getQuantidade(), vendaItem.getValor(), vendaItem.calcularSubtotal());
+        return new VendaItemDTO(
+                vendaItem.getId(),
+                vendaItem.getVenda(),
+                vendaItem.getProduto(),
+                vendaItem.getQuantidade(),
+                vendaItem.getValor(),
+                vendaItem.getTotal()
+        );
     }
 
     public VendaItemDTO cadastrar(VendaItemDTO dto) {
         vendaItemRepository.findById(dto.id());
         VendaItem novoVendaItem = vendaItemRepository.save(new VendaItem(dto));
-        return new VendaItemDTO(novoVendaItem.getId(), novoVendaItem.getVenda(), novoVendaItem.getProduto(), novoVendaItem.getQuantidade(), novoVendaItem.getValor(), novoVendaItem.calcularSubtotal());
+        return new VendaItemDTO(
+                novoVendaItem.getId(),
+                novoVendaItem.getVenda(),
+                novoVendaItem.getProduto(),
+                novoVendaItem.getQuantidade(),
+                novoVendaItem.getValor(),
+                novoVendaItem.getTotal()
+        );
     }
 
     public VendaItemDTO atualizar(Long id, VendaItemDTO dto) {
@@ -41,7 +62,14 @@ public class VendaItemService {
 
         vendaItemRepository.save(vendaItem);
 
-        return new VendaItemDTO(vendaItem.getId(), vendaItem.getVenda(), vendaItem.getProduto(), vendaItem.getQuantidade(), vendaItem.getValor(), vendaItem.calcularSubtotal());
+        return new VendaItemDTO(
+                vendaItem.getId(),
+                vendaItem.getVenda(),
+                vendaItem.getProduto(),
+                vendaItem.getQuantidade(),
+                vendaItem.getValor(),
+                vendaItem.getTotal()
+        );
     }
 
     public VendaItemDTO atualizarAtributo(Long id, VendaItemDTO dto) {

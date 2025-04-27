@@ -38,26 +38,10 @@ public class PedidoItem {
     @NotNull(message = "O preço unitário é obrigatório")
     private BigDecimal valor;
 
-    public BigDecimal calcularSubtotal() {
-        return valor.multiply(BigDecimal.valueOf(quantidade));
-    }
-
     public PedidoItem(PedidoItemDTO dto) {
         this.id = dto.id();
         this.produto = dto.produto();
         this.quantidade = dto.quantidade();
         this.valor = dto.valor();
-    }
-
-    public void atualizar(PedidoItemDTO dto) {
-        if (dto.produto() != null) {
-            this.produto = dto.produto();
-        }
-        if (dto.quantidade() != 0) {
-            this.quantidade = dto.quantidade();
-        }
-        if (dto.valor() != null && dto.valor().compareTo(BigDecimal.ZERO) != 0) {
-            this.valor = dto.valor();
-        }
     }
 }

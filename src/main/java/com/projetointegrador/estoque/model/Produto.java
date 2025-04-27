@@ -26,7 +26,7 @@ public class Produto {
     private Long id;
 
     @NotBlank(message = "O nome do produto é obrigatório")
-    @Column(unique = true) // Garante que o nome do produto seja único
+    @Column(unique = true)
     private String nome;
 
     @NotNull(message = "O preço do produto é obrigatório")

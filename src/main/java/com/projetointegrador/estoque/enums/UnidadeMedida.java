@@ -17,7 +17,9 @@ public enum UnidadeMedida {
     ROLO("rolo"),
     PAR("par"),
     KIT("kit"),
-    FARDO("fardo");
+    FARDO("fardo"),
+    OUTROS("outros");
+
 
     private final String descricao;
 

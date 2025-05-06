@@ -11,6 +11,7 @@ import com.projetointegrador.estoque.model.Produto;
 import com.projetointegrador.estoque.repository.CategoriaRepository;
 import com.projetointegrador.estoque.repository.FornecedorRepository;
 import com.projetointegrador.estoque.repository.ProdutoRepository;
+import com.projetointegrador.estoque.util.DateUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,11 +42,18 @@ public class ProdutoService {
         return mapearParaDTO(produto);
     }
 
-    public ProdutoDTO buscarPorNome(String nome) {
-        Produto produto = produtoRepository.findByNomeIgnoreCase(nome)
-                .orElseThrow(() -> new IllegalArgumentException("Produto com nome " + nome + " não localizado"));
-        return mapearParaDTO(produto);
+    public List<ProdutoDTO> buscarPorNome(String nome) {
+        List<Produto> produtos = produtoRepository.findAllByNomeContainingIgnoreCase(nome);
+//
+//        if (produtos.isEmpty()) {
+//            throw new IllegalArgumentException("Nenhum produto encontrado com o nome: " + nome);
+//        }
+
+        return produtos.stream()
+                .map(this::mapearParaDTO)
+                .toList();
     }
+
 
     public ProdutoDTO cadastrar(ProdutoDTO dto) {
 
@@ -66,6 +74,12 @@ public class ProdutoService {
         Produto produto = new Produto(dto);
         produto.setFornecedor(fornecedor);
         produto.setCategoria(categoria);
+
+        produto.setDataValidade(dto.dataValidade());
+        produto.setDataEntrada(dto.dataEntrada());
+        produto.setDataSaida(dto.dataSaida());
+
+
 
         Produto salvo = produtoRepository.save(produto);
         return mapearParaDTO(salvo);
@@ -94,7 +108,7 @@ public class ProdutoService {
         produto.setMarca(dto.marca());
         produto.setEstoqueMinimo(dto.estoqueMinimo());
         produto.setEstoqueMaximo(dto.estoqueMaximo());
-        produto.setValidade(dto.validade());
+        produto.setDataValidade(dto.dataValidade());
         produto.setDataEntrada(dto.dataEntrada());
         produto.setDataSaida(dto.dataSaida());
         produto.setCategoria(categoria);
@@ -116,7 +130,6 @@ public class ProdutoService {
     }
 
 
-
     private ProdutoDTO mapearParaDTO(Produto produto) {
         return new ProdutoDTO(
                 produto.getId(),
@@ -130,7 +143,7 @@ public class ProdutoService {
                 produto.getMarca(),
                 produto.getEstoqueMinimo(),
                 produto.getEstoqueMaximo(),
-                produto.getValidade(),
+                produto.getDataValidade(),
                 produto.getDataEntrada(),
                 produto.getDataSaida(),
                 produto.getCategoria(),
@@ -161,9 +174,12 @@ public class ProdutoService {
         if (dto.marca() != null) produto.setMarca(dto.marca());
         if (dto.estoqueMinimo() != null) produto.setEstoqueMinimo(dto.estoqueMinimo());
         if (dto.estoqueMaximo() != null) produto.setEstoqueMaximo(dto.estoqueMaximo());
-        if (dto.validade() != null) produto.setValidade(dto.validade());
-        if (dto.dataEntrada() != null) produto.setDataEntrada(dto.dataEntrada());
-        if (dto.dataSaida() != null) produto.setDataSaida(dto.dataSaida());
+        if (dto.dataValidade() != null)
+            produto.setDataValidade(dto.dataValidade());
+        if (dto.dataEntrada() != null)
+            produto.setDataEntrada(dto.dataEntrada());
+        if (dto.dataSaida() != null)
+            produto.setDataSaida(dto.dataSaida());
         if (dto.unidadeMedida() != null) produto.setUnidadeMedida(dto.unidadeMedida());
         if (dto.categoria() != null && dto.categoria().getId() != null) {
             Categoria categoria = categoriaRepository.findById(dto.categoria().getId())
@@ -179,27 +195,27 @@ public class ProdutoService {
     }
 
 
-
-    private Fornecedor buscarFornecedor(Long id) {
-        return fornecedorRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Fornecedor com ID " + id + " não localizado"));
-    }
-
-    private Categoria buscarCategoria(Long id) {
-        return categoriaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Categoria com ID " + id + " não localizada"));
-    }
-    public void adicionarEstoque(Long id, int quantidade) {
-        Produto produto = produtoRepository.findById(id)
-                .orElseThrow(() -> new ProdutoNaoEncontradoException(id));
-
-        produtoRepository.save(produto);
-    }
-
-    public void removerEstoque(Long id, int quantidade) {
-        Produto produto = produtoRepository.findById(id)
-                .orElseThrow(() -> new ProdutoNaoEncontradoException(id));
-
-        produtoRepository.save(produto);
-    }
+//    private Fornecedor buscarFornecedor(Long id) {
+//        return fornecedorRepository.findById(id)
+//                .orElseThrow(() -> new IllegalArgumentException("Fornecedor com ID " + id + " não localizado"));
+//    }
+//
+//    private Categoria buscarCategoria(Long id) {
+//        return categoriaRepository.findById(id)
+//                .orElseThrow(() -> new IllegalArgumentException("Categoria com ID " + id + " não localizada"));
+//    }
+//
+//    public void adicionarEstoque(Long id, int quantidade) {
+//        Produto produto = produtoRepository.findById(id)
+//                .orElseThrow(() -> new ProdutoNaoEncontradoException(id));
+//
+//        produtoRepository.save(produto);
+//    }
+//
+//    public void removerEstoque(Long id, int quantidade) {
+//        Produto produto = produtoRepository.findById(id)
+//                .orElseThrow(() -> new ProdutoNaoEncontradoException(id));
+//
+//        produtoRepository.save(produto);
+//    }
 }

@@ -1,5 +1,6 @@
 package com.projetointegrador.estoque.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.projetointegrador.estoque.dto.ProdutoDTO;
 import com.projetointegrador.estoque.enums.UnidadeMedida;
@@ -12,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -43,9 +45,11 @@ public class Produto {
     private String marca;
     private Integer estoqueMinimo;
     private Integer estoqueMaximo;
-    private String validade;
-    private String dataEntrada;
-    private String dataSaida;
+
+    private LocalDate dataValidade;
+    private LocalDate dataEntrada;
+    private LocalDate dataSaida;
+    
     private String descricao;
 
     private boolean disponivel;
@@ -73,7 +77,7 @@ public class Produto {
         this.marca = dto.marca();
         this.estoqueMinimo = dto.estoqueMinimo();
         this.estoqueMaximo = dto.estoqueMaximo();
-        this.validade = dto.validade();
+        this.dataValidade = dto.dataValidade();
         this.dataEntrada = dto.dataEntrada();
         this.dataSaida = dto.dataSaida();
         this.categoria = dto.categoria();

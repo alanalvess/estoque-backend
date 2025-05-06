@@ -3,11 +3,9 @@ package com.projetointegrador.estoque.dto;
 import com.projetointegrador.estoque.enums.UnidadeMedida;
 import com.projetointegrador.estoque.model.Categoria;
 import com.projetointegrador.estoque.model.Fornecedor;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public record ProdutoDTO(
         Long id,
@@ -21,9 +19,9 @@ public record ProdutoDTO(
         String marca,
         Integer estoqueMinimo,
         Integer estoqueMaximo,
-        String validade,
-        String dataEntrada,
-        String dataSaida,
+        LocalDate dataValidade,
+        LocalDate dataEntrada,
+        LocalDate dataSaida,
         Categoria categoria,
         Fornecedor fornecedor
 ) {

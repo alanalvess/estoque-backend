@@ -39,7 +39,7 @@ public class ProdutoController {
     }
 
     @GetMapping("/buscar/{nome}")
-    public ResponseEntity<ProdutoDTO> buscarPorNome(@PathVariable String nome) {
+    public ResponseEntity<List<ProdutoDTO>> buscarPorNome(@PathVariable String nome) {
         return ResponseEntity.status(HttpStatus.OK).body(produtoService.buscarPorNome(nome));
     }
 

@@ -31,7 +31,7 @@ public class CategoriaController {
     }
 
     @GetMapping("/buscar/{nome}")
-    public ResponseEntity<CategoriaDTO> buscarPorNome(@PathVariable String nome) {
+    public ResponseEntity<List<CategoriaDTO>> buscarPorNome(@PathVariable String nome) {
         return ResponseEntity.status(HttpStatus.OK).body(categoriaService.buscarPorNome(nome));
     }
 

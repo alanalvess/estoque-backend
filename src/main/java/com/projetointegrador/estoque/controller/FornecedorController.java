@@ -1,5 +1,6 @@
 package com.projetointegrador.estoque.controller;
 
+import com.projetointegrador.estoque.dto.CategoriaDTO;
 import com.projetointegrador.estoque.dto.FornecedorDTO;
 import com.projetointegrador.estoque.service.FornecedorService;
 import jakarta.validation.Valid;
@@ -30,8 +31,13 @@ public class FornecedorController {
         return ResponseEntity.status(HttpStatus.OK).body(fornecedorService.buscarPorId(id));
     }
 
-    @GetMapping("/buscar/{cnpj}")
-    public ResponseEntity<FornecedorDTO> buscarPorCNPJ(@PathVariable String cnpj) {
+    @GetMapping("/buscar/nome/{nome}")
+    public ResponseEntity<List<FornecedorDTO>> buscarPorNome(@PathVariable String nome) {
+        return ResponseEntity.status(HttpStatus.OK).body(fornecedorService.buscarPorNome(nome));
+    }
+
+    @GetMapping("/buscar/cnpj/{cnpj}")
+    public ResponseEntity<List<FornecedorDTO>> buscarPorCNPJ(@PathVariable String cnpj) {
         return ResponseEntity.status(HttpStatus.OK).body(fornecedorService.buscarPorCNPJ(cnpj));
     }
 

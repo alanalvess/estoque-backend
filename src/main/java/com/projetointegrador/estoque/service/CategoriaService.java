@@ -1,7 +1,6 @@
 package com.projetointegrador.estoque.service;
 
 import com.projetointegrador.estoque.dto.CategoriaDTO;
-import com.projetointegrador.estoque.exeption.CategoriaNaoEncontradaException;
 import com.projetointegrador.estoque.model.Categoria;
 import com.projetointegrador.estoque.repository.CategoriaRepository;
 import org.springframework.stereotype.Service;
@@ -19,10 +18,7 @@ public class CategoriaService {
     }
 
     public List<CategoriaDTO> listarTodas() {
-        return categoriaRepository.findAll()
-                .stream()
-                .map(this::mapearParaDTO)
-                .toList();
+        return categoriaRepository.findAll().stream().map(this::mapearParaDTO).toList();
     }
 
     public CategoriaDTO buscarPorId(Long id) {
@@ -30,11 +26,19 @@ public class CategoriaService {
         return mapearParaDTO(categoria);
     }
 
-    public CategoriaDTO buscarPorNome(String nome) {
-        Categoria categoria = categoriaRepository.findByNomeIgnoreCase(nome)
-                .orElseThrow(() -> new IllegalArgumentException("Categoria com nome " + nome + "não encontrada"));
-        return mapearParaDTO(categoria);
+    //    public CategoriaDTO buscarPorNome(String nome) {
+//        Categoria categoria = categoriaRepository.findByNomeIgnoreCase(nome)
+//                .orElseThrow(() -> new IllegalArgumentException("Categoria com nome " + nome + "não encontrada"));
+//        return mapearParaDTO(categoria);
+//    }
+    public List<CategoriaDTO> buscarPorNome(String nome) {
+        List<Categoria> categorias = categoriaRepository.findAllByNomeContainingIgnoreCase(nome);
+
+        return categorias.stream()
+                .map(this::mapearParaDTO)
+                .toList();
     }
+
 
     public CategoriaDTO cadastrar(CategoriaDTO dto) {
         if (categoriaRepository.findByNomeIgnoreCase(dto.nome()).isPresent()) {
@@ -68,15 +72,11 @@ public class CategoriaService {
     }
 
     private CategoriaDTO mapearParaDTO(Categoria categoria) {
-        return new CategoriaDTO(
-                categoria.getId(),
-                categoria.getNome()
-        );
+        return new CategoriaDTO(categoria.getId(), categoria.getNome());
     }
 
     private Categoria buscarCategoria(Long id) {
-        return categoriaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Categoria com ID " + id + " não localizado"));
+        return categoriaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Categoria com ID " + id + " não localizado"));
     }
 
     private void atualizarDadosCategoria(Categoria categoria, CategoriaDTO dto) {

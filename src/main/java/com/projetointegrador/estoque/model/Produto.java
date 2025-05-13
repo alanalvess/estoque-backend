@@ -42,7 +42,7 @@ public class Produto {
     private UnidadeMedida unidadeMedida;
 
     private String codigo;
-    private String marca;
+//    private String marca;
     private Integer estoqueMinimo;
     private Integer estoqueMaximo;
 
@@ -61,6 +61,12 @@ public class Produto {
     private Categoria categoria;
 
     @ManyToOne
+    @JoinColumn(name = "marca_id")
+    @JsonIgnoreProperties("produtos")
+    @NotNull(message = "É obrigatório preencher a marca do produto")
+    private Marca marca;
+
+    @ManyToOne
     @JoinColumn(name = "fornecedor_id")
     @JsonIgnoreProperties("produtos")
     @NotNull(message = "É obrigatório preencher o fornecedor do produto")
@@ -74,13 +80,13 @@ public class Produto {
         this.quantidade = dto.quantidade();
         this.codigo = dto.codigo();
         this.unidadeMedida = dto.unidadeMedida();
-        this.marca = dto.marca();
         this.estoqueMinimo = dto.estoqueMinimo();
         this.estoqueMaximo = dto.estoqueMaximo();
         this.dataValidade = dto.dataValidade();
         this.dataEntrada = dto.dataEntrada();
         this.dataSaida = dto.dataSaida();
         this.categoria = dto.categoria();
+        this.marca = dto.marca();
         this.fornecedor = dto.fornecedor();
         if (dto.quantidade() == null || dto.quantidade() <= 0) {
             this.disponivel = false;

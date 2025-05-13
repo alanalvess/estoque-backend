@@ -30,7 +30,7 @@ public class Fornecedor {
     private String nome;
 
     @NotBlank(message = "O CNPJ é obrigatório")
-    @Column(unique = true, length = 18)
+    @Column(unique = true, length = 14)
     private String cnpj;
 
     @NotBlank(message = "O email é obrigatório!")

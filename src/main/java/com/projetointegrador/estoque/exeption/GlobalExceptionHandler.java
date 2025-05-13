@@ -21,6 +21,11 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(MarcaNaoEncontradaException.class)
+    public ResponseEntity<Map<String, Object>> tratarMarcaNaoEncontrada(MarcaNaoEncontradaException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
     @ExceptionHandler(FornecedorNaoEncontradoException.class)
     public ResponseEntity<Map<String, Object>> tratarFornecedorNaoEncontrado(FornecedorNaoEncontradoException ex) {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
@@ -65,6 +70,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor: " + ex.getMessage());
     }
+
+    @ExceptionHandler(DatasInvalidasException.class)
+    public ResponseEntity<Map<String, Object>> tratarDatasInvalidas(DatasInvalidasException ex) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> tratarValidacoes(MethodArgumentNotValidException ex) {

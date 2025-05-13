@@ -24,6 +24,8 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secret;
 
+    long EXPIRATION_TIME_MS = 1000 * 60 * 60 * 24; // 24 horas
+
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);
@@ -65,7 +67,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(userName)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_MS))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

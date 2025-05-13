@@ -30,20 +30,29 @@ public class FornecedorService {
         return mapearParaDTO(fornecedor);
     }
 
-    public FornecedorDTO buscarPorCNPJ(String cnpj) {
-        Fornecedor fornecedor = fornecedorRepository.findByCnpj(cnpj)
-                .orElseThrow(() -> new IllegalArgumentException("Fornecedor com CNPJ " + cnpj + " não localizado"));
-        return mapearParaDTO(fornecedor);
+    public List<FornecedorDTO> buscarPorNome(String nome) {
+        List<Fornecedor> fornecedores = fornecedorRepository.findAllByNomeContainingIgnoreCase(nome);
+
+        return fornecedores.stream()
+                .map(this::mapearParaDTO)
+                .toList();
+    }
+
+    public List<FornecedorDTO> buscarPorCNPJ(String cnpj) {
+        List<Fornecedor> fornecedores = fornecedorRepository.findAllByCnpjContainingIgnoreCase(cnpj);
+        return fornecedores.stream()
+                .map(this::mapearParaDTO)
+                .toList();
     }
 
     public FornecedorDTO cadastrar(FornecedorDTO dto) {
 
-        if (fornecedorRepository.findByCnpj(dto.cnpj()).isPresent()) {
-            throw new FornecedorDuplicadoException("CNPJ", dto.cnpj());
+        if (fornecedorRepository.findByNomeIgnoreCase(dto.nome()).isPresent()) {
+            throw new FornecedorDuplicadoException("Nome", dto.nome());
         }
 
-        if (fornecedorRepository.findByEmail(dto.email()).isPresent()) {
-            throw new FornecedorDuplicadoException("email", dto.email());
+        if (!fornecedorRepository.findAllByCnpjContainingIgnoreCase(dto.cnpj()).isEmpty()) {
+            throw new FornecedorDuplicadoException("CNPJ", dto.cnpj());
         }
 
         Fornecedor fornecedor = new Fornecedor(dto);
@@ -53,7 +62,7 @@ public class FornecedorService {
     public Optional<FornecedorDTO> atualizar(Long id, FornecedorDTO dto) {
         Fornecedor fornecedor = buscarFornecedor(id);
 
-        if (dto.nome() == null || dto.cnpj() == null || dto.email() == null) {
+        if (dto.nome() == null || dto.cnpj() == null) {
             throw new IllegalArgumentException("Favor informar todos os itens obrigatorios");
         }
 

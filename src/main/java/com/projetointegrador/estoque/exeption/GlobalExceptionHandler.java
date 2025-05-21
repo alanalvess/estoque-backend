@@ -41,6 +41,11 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(UsuarioNaoAutorizadoException.class)
+    public ResponseEntity<Map<String, Object>> tratarUsuarioNaoAutorizado(UsuarioNaoAutorizadoException ex) {
+        return buildResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
+
     @ExceptionHandler(ClienteDuplicadoException.class)
     public ResponseEntity<Map<String, Object>> tratarClienteDuplicado(ClienteDuplicadoException ex) {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
@@ -54,6 +59,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ProdutoDuplicadoException.class)
     public ResponseEntity<Map<String, Object>> tratarProdutoDuplicado(ProdutoDuplicadoException ex) {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(AcessoNegadoException.class)
+    public ResponseEntity<Map<String, Object>> tratarAcessoNegado(AcessoNegadoException ex) {
+        return buildResponse(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -79,32 +89,32 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> tratarValidacoes(MethodArgumentNotValidException ex) {
-        String primeiraMensagem = ex.getBindingResult()
+        String message = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .findFirst()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .orElse("Erro de validação");
 
-        return buildResponse(HttpStatus.BAD_REQUEST, primeiraMensagem);
+        return buildResponse(HttpStatus.BAD_REQUEST, message);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, Object>> tratarViolacaoIntegridade(DataIntegrityViolationException ex) {
-        String mensagem = "Erro ao salvar: verifique se os dados estão corretos.";
+        String message = "Erro ao salvar: verifique se os dados estão corretos.";
         if (ex.getMostSpecificCause().getMessage().contains("tb_produtos.nome")) {
-            mensagem = "Já existe um produto com esse nome.";
+            message = "Já existe um produto com esse nome.";
         }
-        return buildResponse(HttpStatus.BAD_REQUEST, mensagem);
+        return buildResponse(HttpStatus.BAD_REQUEST, message);
     }
 
     // ✅ Método auxiliar para construir a resposta personalizada
-    private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String mensagem) {
+    private ResponseEntity<Map<String, Object>> buildResponse(HttpStatus status, String message) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", status.value());
         body.put("erro", status.getReasonPhrase());
-        body.put("mensagem", mensagem);
+        body.put("message", message);
         return ResponseEntity.status(status).body(body);
     }
 }

@@ -1,11 +1,14 @@
 package com.projetointegrador.estoque.service;
 
+import com.projetointegrador.estoque.dto.CategoriaDTO;
 import com.projetointegrador.estoque.dto.UsuarioDTO;
 import com.projetointegrador.estoque.dto.UsuarioLoginDTO;
 import com.projetointegrador.estoque.dto.UsuarioRequestDTO;
 import com.projetointegrador.estoque.enums.Role;
 import com.projetointegrador.estoque.exeption.AcessoNegadoException;
+import com.projetointegrador.estoque.exeption.UsuarioNaoAutorizadoException;
 import com.projetointegrador.estoque.exeption.UsuarioNaoEncontradoException;
+import com.projetointegrador.estoque.model.Categoria;
 import com.projetointegrador.estoque.model.Usuario;
 import com.projetointegrador.estoque.repository.UsuarioRepository;
 import com.projetointegrador.estoque.security.JwtService;
@@ -14,13 +17,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,23 +71,54 @@ public class UsuarioService {
         }
     }
 
-    public List<UsuarioRequestDTO> listarTodos() {
+    public List<UsuarioRequestDTO> listarTodos(String emailAutenticado) {
+        if (!emailAutenticado.equals(adminEmail)) {
+            throw new AcessoNegadoException("Apenas o ADMIN pode visualizar todos os usuários.");
+        }
+
         return usuarioRepository.findAll()
                 .stream()
                 .map(this::mapearParaDTO)
                 .toList();
     }
 
-    public UsuarioRequestDTO buscarPorId(Long id) {
+    public UsuarioRequestDTO buscarPorId(Long id, String emailAutenticado) {
+        Usuario usuarioAutenticado = usuarioRepository.findByEmail(emailAutenticado)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário autenticado não encontrado"));
+
+        boolean isAdmin = emailAutenticado.equals(adminEmail);
+        boolean isProprioUsuario = usuarioAutenticado.getId().equals(id);
+
+        if (!isAdmin && !isProprioUsuario) {
+            throw new AcessoNegadoException("Você não tem permissão para visualizar este usuário.");
+        }
+
         Usuario usuario = buscarUsuario(id);
         return mapearParaDTO(usuario);
     }
 
-    public UsuarioRequestDTO buscarPorEmail(String email) {
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário com e-mail " + email + "não localizado"));
+    public UsuarioRequestDTO buscarPorEmail(String emailSolicitado, String emailAutenticado) {
+        boolean isAdmin = emailAutenticado.equals(adminEmail);
+        boolean isProprioUsuario = emailAutenticado.equals(emailSolicitado);
+
+        if (!isAdmin && !isProprioUsuario) {
+            throw new AcessoNegadoException("Você não tem permissão para visualizar este usuário.");
+        }
+
+        Usuario usuario = usuarioRepository.findByEmail(emailSolicitado)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o email informado."));
+
         return mapearParaDTO(usuario);
     }
+
+    public List<UsuarioRequestDTO> buscarPorNome(String nome) {
+
+        List<Usuario> usuarios = usuarioRepository.findAllByNomeContainingIgnoreCase(nome);
+
+        return usuarios.stream()
+                .map(this::mapearParaDTO)
+                .toList();    }
+
 
     public UsuarioDTO cadastrar(Usuario usuario, Authentication authentication) {
         verificarSeEmailJaExiste(usuario.getEmail());
@@ -110,23 +147,23 @@ public class UsuarioService {
 
     public Optional<Usuario> atualizar(Usuario usuario) {
         return usuarioRepository.findById(usuario.getId()).map(existingUser -> {
-
-            // Verifica se o novo e-mail já está sendo usado por outro usuário
+            // Validação de e-mail duplicado
             usuarioRepository.findByEmail(usuario.getEmail())
-                    .filter(user -> !user.getId().equals(usuario.getId()))
-                    .ifPresent(user -> {
+                    .filter(u -> !u.getId().equals(usuario.getId()))
+                    .ifPresent(u -> {
                         throw new IllegalArgumentException("E-mail cadastrado para outro usuário");
                     });
 
-            // Atualiza os campos que mudaram
-            existingUser.setNome(usuario.getNome()); // exemplo: se tiver campo nome
+            existingUser.setNome(usuario.getNome());
 
             if (!existingUser.getEmail().equals(usuario.getEmail())) {
                 existingUser.setEmail(usuario.getEmail());
             }
 
-            if (!usuario.getSenha().equals(existingUser.getSenha())) {
-                existingUser.setSenha(passwordEncoder.encode(usuario.getSenha()));
+            if (usuario.getSenha() != null && !usuario.getSenha().isBlank()) {
+                if (!passwordEncoder.matches(usuario.getSenha(), existingUser.getSenha())) {
+                    existingUser.setSenha(passwordEncoder.encode(usuario.getSenha()));
+                }
             }
 
             if (usuario.getRoles() != null && !usuario.getRoles().isEmpty()) {
@@ -137,27 +174,40 @@ public class UsuarioService {
         });
     }
 
+
+
     public Optional<Usuario> atualizarAtributo(Usuario usuario) {
         return atualizar(usuario);
     }
 
     public Optional<UsuarioDTO> autenticarUsuario(UsuarioLoginDTO usuarioLoginDTO) {
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(usuarioLoginDTO.email(), usuarioLoginDTO.senha()));
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(usuarioLoginDTO.email(), usuarioLoginDTO.senha())
+            );
 
-        Usuario usuario = usuarioRepository.findByEmail(usuarioLoginDTO.email())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+            Usuario usuario = usuarioRepository.findByEmail(usuarioLoginDTO.email())
+                    .orElseThrow(() -> new UsuarioNaoEncontradoException("Usuário não encontrado"));
 
-        String token = "Bearer " + jwtService.generateToken(usuario.getEmail(), usuario.getRoles());
+            String token = "Bearer " + jwtService.generateToken(usuario.getEmail(), usuario.getRoles());
 
-        return Optional.of(new UsuarioDTO(
-                usuario.getId(),
-                usuario.getNome(),
-                usuario.getEmail(),
-                token,
-                usuario.getRoles()
-        ));
+            return Optional.of(new UsuarioDTO(
+                    usuario.getId(),
+                    usuario.getNome(),
+                    usuario.getEmail(),
+                    token,
+                    usuario.getRoles()
+            ));
+        } catch (AuthenticationException ex) {
+            // Captura falha na autenticação (senha errada, etc)
+            throw new UsuarioNaoAutorizadoException("Falha na autenticação");
+        } catch (UsuarioNaoAutorizadoException | UsuarioNaoEncontradoException ex) {
+            throw ex; // Já serão tratados no ControllerAdvice
+        }
     }
+
+
+
 
     public void deletar(Long id, String email) {
         Usuario usuarioAutenticado = usuarioRepository.findByEmail(email)
@@ -170,16 +220,15 @@ public class UsuarioService {
             throw new AcessoNegadoException("O usuário ADMIN padrão não pode ser excluído.");
         }
 
-        boolean isAdmin = usuarioAutenticado.getRoles().contains(Role.ADMIN);
+        boolean isAdminPadrao = email.equals(adminEmail);
         boolean isProprioUsuario = usuarioAutenticado.getId().equals(usuarioParaExcluir.getId());
 
-        if (isAdmin || isProprioUsuario) {
+        if (isAdminPadrao || isProprioUsuario) {
             usuarioRepository.delete(usuarioParaExcluir);
         } else {
             throw new AcessoNegadoException("Você não tem permissão para excluir este usuário.");
         }
     }
-
 
     private UsuarioRequestDTO mapearParaDTO(Usuario usuario) {
         return new UsuarioRequestDTO(
@@ -189,6 +238,21 @@ public class UsuarioService {
                 usuario.getRoles()
         );
     }
+
+    public UsuarioDTO mapearParaDTOComToken(Usuario usuario, String token) {
+        return new UsuarioDTO(
+                usuario.getId(),
+                usuario.getNome(),
+                usuario.getEmail(),
+                token,
+                usuario.getRoles()
+        );
+    }
+
+
+
+
+
 
     private Usuario buscarUsuario(Long id) {
         return usuarioRepository.findById(id)

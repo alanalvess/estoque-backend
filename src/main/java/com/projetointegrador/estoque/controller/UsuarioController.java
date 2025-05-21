@@ -28,18 +28,28 @@ public class UsuarioController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<UsuarioRequestDTO>> listarTodos() {
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.listarTodos());
+    public ResponseEntity<List<UsuarioRequestDTO>> listarTodos(@AuthenticationPrincipal UserDetails userDetails) {
+        String email = userDetails.getUsername();
+        return ResponseEntity.ok(usuarioService.listarTodos(email));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioRequestDTO> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.buscarPorId(id));
+    public ResponseEntity<UsuarioRequestDTO> buscarPorId(@PathVariable Long id,
+                                                         @AuthenticationPrincipal UserDetails userDetails) {
+        String email = userDetails.getUsername();
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.buscarPorId(id, email));
     }
 
-    @GetMapping("/buscar/{email}")
-    public ResponseEntity<UsuarioRequestDTO> buscarPorEmail(@PathVariable String email) {
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.buscarPorEmail(email));
+    @GetMapping("/buscar/{nome}")
+    public ResponseEntity<List<UsuarioRequestDTO>> buscarPorNome(@PathVariable String nome) {
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.buscarPorNome(nome));
+    }
+
+    @GetMapping("/email")
+    public ResponseEntity<UsuarioRequestDTO> buscarPorEmail(@RequestParam String email,
+                                                            @AuthenticationPrincipal UserDetails userDetails) {
+        String emailAutenticado = userDetails.getUsername();
+        return ResponseEntity.ok(usuarioService.buscarPorEmail(email, emailAutenticado));
     }
 
     @PostMapping("/logar")
@@ -62,6 +72,26 @@ public class UsuarioController {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
+    private String extrairToken(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
+    }
+
+
+    @PutMapping("/usuarios")
+    public ResponseEntity<UsuarioDTO> atualizarUsuario(
+            @RequestBody Usuario usuario,
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        String token = extrairToken(authHeader); // Remove "Bearer ", por exemplo
+
+        return usuarioService.atualizar(usuario)
+                .map(u -> ResponseEntity.ok(usuarioService.mapearParaDTOComToken(u, token)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PatchMapping("/atualizar")
     public ResponseEntity<Optional<Usuario>> atualizarAtributo(@RequestBody Usuario usuario) {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioService.atualizarAtributo(usuario));
@@ -73,5 +103,4 @@ public class UsuarioController {
         usuarioService.deletar(id, email);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // HTTP 204
     }
-
 }

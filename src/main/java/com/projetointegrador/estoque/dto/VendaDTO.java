@@ -10,6 +10,5 @@ public record VendaDTO(
         LocalDateTime dataVenda,
         Cliente cliente,
         BigDecimal total
-
 ) {
 }

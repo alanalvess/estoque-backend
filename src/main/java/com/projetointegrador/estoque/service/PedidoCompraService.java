@@ -3,7 +3,6 @@ package com.projetointegrador.estoque.service;
 import com.projetointegrador.estoque.dto.PedidoCompraDTO;
 import com.projetointegrador.estoque.model.Fornecedor;
 import com.projetointegrador.estoque.model.PedidoCompra;
-import com.projetointegrador.estoque.model.PedidoItem;
 import com.projetointegrador.estoque.repository.FornecedorRepository;
 import com.projetointegrador.estoque.repository.PedidoCompraRepository;
 import org.springframework.stereotype.Service;

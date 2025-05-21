@@ -26,11 +26,6 @@ public class CategoriaService {
         return mapearParaDTO(categoria);
     }
 
-    //    public CategoriaDTO buscarPorNome(String nome) {
-//        Categoria categoria = categoriaRepository.findByNomeIgnoreCase(nome)
-//                .orElseThrow(() -> new IllegalArgumentException("Categoria com nome " + nome + "não encontrada"));
-//        return mapearParaDTO(categoria);
-//    }
     public List<CategoriaDTO> buscarPorNome(String nome) {
         List<Categoria> categorias = categoriaRepository.findAllByNomeContainingIgnoreCase(nome);
 
@@ -38,7 +33,6 @@ public class CategoriaService {
                 .map(this::mapearParaDTO)
                 .toList();
     }
-
 
     public CategoriaDTO cadastrar(CategoriaDTO dto) {
         if (categoriaRepository.findByNomeIgnoreCase(dto.nome()).isPresent()) {
@@ -81,6 +75,5 @@ public class CategoriaService {
 
     private void atualizarDadosCategoria(Categoria categoria, CategoriaDTO dto) {
         if (dto.nome() != null) categoria.setNome(dto.nome());
-
     }
 }

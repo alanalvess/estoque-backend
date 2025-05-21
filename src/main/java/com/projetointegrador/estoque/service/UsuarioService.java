@@ -1,6 +1,5 @@
 package com.projetointegrador.estoque.service;
 
-import com.projetointegrador.estoque.dto.CategoriaDTO;
 import com.projetointegrador.estoque.dto.UsuarioDTO;
 import com.projetointegrador.estoque.dto.UsuarioLoginDTO;
 import com.projetointegrador.estoque.dto.UsuarioRequestDTO;
@@ -8,7 +7,6 @@ import com.projetointegrador.estoque.enums.Role;
 import com.projetointegrador.estoque.exeption.AcessoNegadoException;
 import com.projetointegrador.estoque.exeption.UsuarioNaoAutorizadoException;
 import com.projetointegrador.estoque.exeption.UsuarioNaoEncontradoException;
-import com.projetointegrador.estoque.model.Categoria;
 import com.projetointegrador.estoque.model.Usuario;
 import com.projetointegrador.estoque.repository.UsuarioRepository;
 import com.projetointegrador.estoque.security.JwtService;
@@ -17,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -26,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -117,7 +113,8 @@ public class UsuarioService {
 
         return usuarios.stream()
                 .map(this::mapearParaDTO)
-                .toList();    }
+                .toList();
+    }
 
 
     public UsuarioDTO cadastrar(Usuario usuario, Authentication authentication) {
@@ -140,14 +137,13 @@ public class UsuarioService {
                 salvo.getId(),
                 salvo.getNome(),
                 salvo.getEmail(),
-                null, // token pode ser preenchido depois no login
+                null,
                 salvo.getRoles()
         );
     }
 
     public Optional<Usuario> atualizar(Usuario usuario) {
         return usuarioRepository.findById(usuario.getId()).map(existingUser -> {
-            // Validação de e-mail duplicado
             usuarioRepository.findByEmail(usuario.getEmail())
                     .filter(u -> !u.getId().equals(usuario.getId()))
                     .ifPresent(u -> {
@@ -174,8 +170,6 @@ public class UsuarioService {
         });
     }
 
-
-
     public Optional<Usuario> atualizarAtributo(Usuario usuario) {
         return atualizar(usuario);
     }
@@ -199,15 +193,11 @@ public class UsuarioService {
                     usuario.getRoles()
             ));
         } catch (AuthenticationException ex) {
-            // Captura falha na autenticação (senha errada, etc)
             throw new UsuarioNaoAutorizadoException("Falha na autenticação");
         } catch (UsuarioNaoAutorizadoException | UsuarioNaoEncontradoException ex) {
-            throw ex; // Já serão tratados no ControllerAdvice
+            throw ex;
         }
     }
-
-
-
 
     public void deletar(Long id, String email) {
         Usuario usuarioAutenticado = usuarioRepository.findByEmail(email)
@@ -248,11 +238,6 @@ public class UsuarioService {
                 usuario.getRoles()
         );
     }
-
-
-
-
-
 
     private Usuario buscarUsuario(Long id) {
         return usuarioRepository.findById(id)

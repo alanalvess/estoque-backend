@@ -27,6 +27,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             return new UserDetailsImpl(usuario.get());
         else
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-
     }
 }

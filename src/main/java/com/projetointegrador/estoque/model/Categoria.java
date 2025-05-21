@@ -34,5 +34,4 @@ public class Categoria {
         this.id = dto.id();
         this.nome = dto.nome();
     }
-
 }

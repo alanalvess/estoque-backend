@@ -1,26 +1,18 @@
 package com.projetointegrador.estoque.controller;
 
 import com.projetointegrador.estoque.dto.ProdutoDTO;
-import com.projetointegrador.estoque.model.Produto;
-import com.projetointegrador.estoque.repository.CategoriaRepository;
-import com.projetointegrador.estoque.repository.ProdutoRepository;
-import com.projetointegrador.estoque.service.CategoriaService;
 import com.projetointegrador.estoque.service.ProdutoService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/produtos")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ProdutoController {
-
 
     private final ProdutoService produtoService;
 
@@ -67,5 +59,4 @@ public class ProdutoController {
         produtoService.deletar(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
 }

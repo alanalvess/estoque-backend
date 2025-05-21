@@ -62,5 +62,4 @@ public class VendaController {
 
         vendaRepository.deleteById(id);
     }
-
 }

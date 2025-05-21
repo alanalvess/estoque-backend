@@ -1,6 +1,5 @@
 package com.projetointegrador.estoque.controller;
 
-import com.projetointegrador.estoque.dto.CategoriaDTO;
 import com.projetointegrador.estoque.dto.FornecedorDTO;
 import com.projetointegrador.estoque.service.FornecedorService;
 import jakarta.validation.Valid;
@@ -65,6 +64,4 @@ public class FornecedorController {
         fornecedorService.deletar(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
-
 }

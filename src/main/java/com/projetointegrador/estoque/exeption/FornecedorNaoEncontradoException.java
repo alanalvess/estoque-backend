@@ -9,4 +9,3 @@ public class FornecedorNaoEncontradoException extends RuntimeException {
         super("Fornecedor com ID " + id + " não localizado.");
     }
 }
-

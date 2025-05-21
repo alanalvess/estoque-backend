@@ -1,7 +1,6 @@
 package com.projetointegrador.estoque.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.projetointegrador.estoque.dto.FornecedorDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

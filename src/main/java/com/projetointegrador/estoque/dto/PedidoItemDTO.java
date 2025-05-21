@@ -9,7 +9,5 @@ public record PedidoItemDTO(
         Produto produto,
         Integer quantidade,
         BigDecimal valor
-
 ) {
-
 }

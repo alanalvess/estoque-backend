@@ -50,5 +50,4 @@ public class PedidoItemController {
         pedidoItemService.deletar(id);
         return ResponseEntity.noContent().build();
     }
-
 }

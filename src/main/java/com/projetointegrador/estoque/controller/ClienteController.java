@@ -54,6 +54,4 @@ public class ClienteController {
         clienteService.deletar(id);
         return ResponseEntity.noContent().build();
     }
-
-
 }

@@ -11,9 +11,10 @@ import java.util.Optional;
 public interface FornecedorRepository extends JpaRepository<Fornecedor, Long> {
 
     Optional<Fornecedor> findByEmail(String email);
+
     Optional<Fornecedor> findByNomeIgnoreCase(String nome);
 
     List<Fornecedor> findAllByCnpjContainingIgnoreCase(String cnpj);
-    List<Fornecedor> findAllByNomeContainingIgnoreCase(String nome);
 
+    List<Fornecedor> findAllByNomeContainingIgnoreCase(String nome);
 }

@@ -1,6 +1,5 @@
 package com.projetointegrador.estoque.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.projetointegrador.estoque.dto.ProdutoDTO;
 import com.projetointegrador.estoque.enums.UnidadeMedida;
@@ -14,7 +13,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -42,14 +40,13 @@ public class Produto {
     private UnidadeMedida unidadeMedida;
 
     private String codigo;
-//    private String marca;
     private Integer estoqueMinimo;
     private Integer estoqueMaximo;
 
     private LocalDate dataValidade;
     private LocalDate dataEntrada;
     private LocalDate dataSaida;
-    
+
     private String descricao;
 
     private boolean disponivel;

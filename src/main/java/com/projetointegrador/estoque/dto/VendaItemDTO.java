@@ -12,6 +12,5 @@ public record VendaItemDTO(
         Integer quantidade,
         BigDecimal valor,
         BigDecimal total
-
 ) {
 }

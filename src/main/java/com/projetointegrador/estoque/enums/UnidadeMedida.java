@@ -20,7 +20,6 @@ public enum UnidadeMedida {
     FARDO("fardo"),
     OUTROS("outros");
 
-
     private final String descricao;
 
     UnidadeMedida(String descricao) {
@@ -31,4 +30,3 @@ public enum UnidadeMedida {
         return descricao;
     }
 }
-

@@ -1,6 +1,5 @@
 package com.projetointegrador.estoque.service;
 
-import com.projetointegrador.estoque.dto.FornecedorDTO;
 import com.projetointegrador.estoque.dto.ProdutoDTO;
 import com.projetointegrador.estoque.exeption.*;
 import com.projetointegrador.estoque.model.Categoria;
@@ -26,7 +25,12 @@ public class ProdutoService {
     private final FornecedorRepository fornecedorRepository;
     private final MarcaRepository marcaRepository;
 
-    public ProdutoService(ProdutoRepository produtoRepository, CategoriaRepository categoriaRepository, MarcaRepository marcaRepository, FornecedorRepository fornecedorRepository) {
+    public ProdutoService(
+            ProdutoRepository produtoRepository,
+            CategoriaRepository categoriaRepository,
+            MarcaRepository marcaRepository,
+            FornecedorRepository fornecedorRepository
+    ) {
         this.produtoRepository = produtoRepository;
         this.categoriaRepository = categoriaRepository;
         this.fornecedorRepository = fornecedorRepository;
@@ -59,7 +63,6 @@ public class ProdutoService {
                 .map(this::mapearParaDTO)
                 .toList();
     }
-
 
     public ProdutoDTO cadastrar(ProdutoDTO dto) {
 
@@ -112,9 +115,6 @@ public class ProdutoService {
             throw new IllegalArgumentException("A quantidade do produto não pode ser negativa.");
         }
 
-
-
-
         Produto salvo = produtoRepository.save(produto);
 
         return mapearParaDTO(salvo);
@@ -157,7 +157,6 @@ public class ProdutoService {
             throw new IllegalArgumentException("A quantidade do produto não pode ser negativa.");
         }
 
-
         if (dto.dataValidade() != null && dto.dataEntrada() != null &&
                 dto.dataValidade().isBefore(dto.dataEntrada())) {
             throw new DatasInvalidasException("A data de validade não pode ser anterior à data de entrada.");
@@ -167,18 +166,15 @@ public class ProdutoService {
                 dto.dataSaida().isBefore(dto.dataEntrada())) {
             throw new DatasInvalidasException("A data de saída não pode ser anterior à data de entrada.");
         }
+
         if (dto.estoqueMinimo() != null && dto.estoqueMaximo() != null &&
                 dto.estoqueMaximo() < dto.estoqueMinimo()) {
             throw new IllegalArgumentException("O estoque máximo não pode ser menor que o estoque mínimo.");
         }
 
-
-
         produto.setCategoria(categoria);
         produto.setMarca(marca);
         produto.setFornecedor(fornecedor);
-
-
 
         return Optional.of(mapearParaDTO(produtoRepository.save(produto)));
     }
@@ -194,7 +190,6 @@ public class ProdutoService {
         Produto produto = buscarProduto(id);
         produtoRepository.delete(produto);
     }
-
 
     private ProdutoDTO mapearParaDTO(Produto produto) {
         return new ProdutoDTO(
@@ -230,6 +225,7 @@ public class ProdutoService {
 
         if (dto.disponivel() != null) {
             Integer quantidadeAtualizada = dto.quantidade() != null ? dto.quantidade() : produto.getQuantidade();
+
             if (dto.disponivel() && (quantidadeAtualizada == null || quantidadeAtualizada <= 0)) {
                 throw new IllegalArgumentException("Produto não pode estar disponível com quantidade zero.");
             }
@@ -239,17 +235,16 @@ public class ProdutoService {
         if (dto.codigo() != null) produto.setCodigo(dto.codigo());
         if (dto.estoqueMinimo() != null) produto.setEstoqueMinimo(dto.estoqueMinimo());
         if (dto.estoqueMaximo() != null) produto.setEstoqueMaximo(dto.estoqueMaximo());
-        if (dto.dataValidade() != null)
-            produto.setDataValidade(dto.dataValidade());
-        if (dto.dataEntrada() != null)
-            produto.setDataEntrada(dto.dataEntrada());
-        if (dto.dataSaida() != null)
-            produto.setDataSaida(dto.dataSaida());
+
+        if (dto.dataValidade() != null) produto.setDataValidade(dto.dataValidade());
+        if (dto.dataEntrada() != null) produto.setDataEntrada(dto.dataEntrada());
+        if (dto.dataSaida() != null) produto.setDataSaida(dto.dataSaida());
+
         if (dto.unidadeMedida() != null) produto.setUnidadeMedida(dto.unidadeMedida());
 
         LocalDate entrada = dto.dataEntrada() != null ? dto.dataEntrada() : produto.getDataEntrada();
         LocalDate validade = dto.dataValidade() != null ? dto.dataValidade() : produto.getDataValidade();
-        LocalDate saida    = dto.dataSaida() != null ? dto.dataSaida() : produto.getDataSaida();
+        LocalDate saida = dto.dataSaida() != null ? dto.dataSaida() : produto.getDataSaida();
 
         if (validade != null && entrada != null && validade.isBefore(entrada)) {
             throw new DatasInvalidasException("A data de validade não pode ser anterior à data de entrada.");
@@ -259,8 +254,7 @@ public class ProdutoService {
             throw new DatasInvalidasException("A data de saída não pode ser anterior à data de entrada.");
         }
 
-        if (dto.estoqueMinimo() != null && dto.estoqueMaximo() != null &&
-                dto.estoqueMaximo() < dto.estoqueMinimo()) {
+        if (dto.estoqueMinimo() != null && dto.estoqueMaximo() != null && dto.estoqueMaximo() < dto.estoqueMinimo()) {
             throw new IllegalArgumentException("O estoque máximo não pode ser menor que o estoque mínimo.");
         }
 
@@ -272,17 +266,17 @@ public class ProdutoService {
             throw new IllegalArgumentException("A quantidade do produto não pode ser negativa.");
         }
 
-
-
         if (dto.categoria() != null && dto.categoria().getId() != null) {
             Categoria categoria = categoriaRepository.findById(dto.categoria().getId())
                     .orElseThrow(() -> new CategoriaNaoEncontradaException(dto.categoria().getId()));
             produto.setCategoria(categoria);
         }
+
         if (dto.marca() != null && dto.marca().getId() != null) {
             Marca marca = marcaRepository.findById(dto.marca().getId())
                     .orElseThrow(() -> new MarcaNaoEncontradaException(dto.marca().getId()));
-            produto.setMarca(marca);        }
+            produto.setMarca(marca);
+        }
 
         if (dto.fornecedor() != null && dto.fornecedor().getId() != null) {
             Fornecedor fornecedor = fornecedorRepository.findById(dto.fornecedor().getId())

@@ -51,10 +51,6 @@ public class FornecedorService {
             throw new FornecedorDuplicadoException("Nome", dto.nome());
         }
 
-//        if (!fornecedorRepository.findAllByCnpjContainingIgnoreCase(dto.cnpj()).isEmpty()) {
-//            throw new FornecedorDuplicadoException("CNPJ", dto.cnpj());
-//        }
-
         Fornecedor fornecedor = new Fornecedor(dto);
         return mapearParaDTO(fornecedorRepository.save(fornecedor));
     }
@@ -86,7 +82,6 @@ public class FornecedorService {
         Fornecedor fornecedor = buscarFornecedor(id);
         fornecedorRepository.delete(fornecedor);
     }
-
 
     private FornecedorDTO mapearParaDTO(Fornecedor fornecedor) {
         return new FornecedorDTO(

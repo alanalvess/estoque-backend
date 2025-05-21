@@ -42,7 +42,6 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignKey()).build()
@@ -76,6 +75,4 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userName, roles);
     }
-
-
 }

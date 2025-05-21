@@ -82,6 +82,5 @@ public class MarcaService {
 
     private void atualizarDadosMarca(Marca marca, MarcaDTO dto) {
         if (dto.nome() != null) marca.setNome(dto.nome());
-
     }
 }

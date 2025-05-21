@@ -1,7 +1,5 @@
 package com.projetointegrador.estoque.dto;
 
-import jakarta.validation.constraints.NotBlank;
-
 public record FornecedorDTO(
         Long id,
         String nome,
@@ -9,7 +7,5 @@ public record FornecedorDTO(
         String email,
         String telefone,
         String endereco
-
-
 ) {
 }

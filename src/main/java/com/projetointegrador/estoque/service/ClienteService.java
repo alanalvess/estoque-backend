@@ -38,7 +38,6 @@ public class ClienteService {
                 .toList();
     }
 
-
     public ClienteDTO cadastrar(ClienteDTO dto) {
         if (clienteRepository.findByCpf(dto.cpf()).isPresent()) {
             throw new ClienteDuplicadoException(dto.cpf());

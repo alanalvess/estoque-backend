@@ -51,9 +51,9 @@ public class FornecedorService {
             throw new FornecedorDuplicadoException("Nome", dto.nome());
         }
 
-        if (!fornecedorRepository.findAllByCnpjContainingIgnoreCase(dto.cnpj()).isEmpty()) {
-            throw new FornecedorDuplicadoException("CNPJ", dto.cnpj());
-        }
+//        if (!fornecedorRepository.findAllByCnpjContainingIgnoreCase(dto.cnpj()).isEmpty()) {
+//            throw new FornecedorDuplicadoException("CNPJ", dto.cnpj());
+//        }
 
         Fornecedor fornecedor = new Fornecedor(dto);
         return mapearParaDTO(fornecedorRepository.save(fornecedor));
@@ -62,7 +62,7 @@ public class FornecedorService {
     public Optional<FornecedorDTO> atualizar(Long id, FornecedorDTO dto) {
         Fornecedor fornecedor = buscarFornecedor(id);
 
-        if (dto.nome() == null || dto.cnpj() == null) {
+        if (dto.nome() == null) {
             throw new IllegalArgumentException("Favor informar todos os itens obrigatorios");
         }
 

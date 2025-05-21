@@ -29,13 +29,10 @@ public class Fornecedor {
     @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres")
     private String nome;
 
-    @NotBlank(message = "O CNPJ é obrigatório")
     @Column(unique = true, length = 14)
     private String cnpj;
 
-    @NotBlank(message = "O email é obrigatório!")
     @Email(message = "E-mail inválido")
-    @Column(unique = true)
     private String email;
 
     private String telefone;

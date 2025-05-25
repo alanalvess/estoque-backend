@@ -46,11 +46,6 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
-    @ExceptionHandler(ClienteDuplicadoException.class)
-    public ResponseEntity<Map<String, Object>> tratarClienteDuplicado(ClienteDuplicadoException ex) {
-        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
-    }
-
     @ExceptionHandler(FornecedorDuplicadoException.class)
     public ResponseEntity<Map<String, Object>> tratarFornecedorDuplicado(FornecedorDuplicadoException ex) {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());

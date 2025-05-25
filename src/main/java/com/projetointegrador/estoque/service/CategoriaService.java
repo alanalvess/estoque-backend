@@ -18,7 +18,10 @@ public class CategoriaService {
     }
 
     public List<CategoriaDTO> listarTodas() {
-        return categoriaRepository.findAll().stream().map(this::mapearParaDTO).toList();
+        return categoriaRepository.findAll()
+                .stream()
+                .map(this::mapearParaDTO)
+                .toList();
     }
 
     public CategoriaDTO buscarPorId(Long id) {
@@ -66,11 +69,15 @@ public class CategoriaService {
     }
 
     private CategoriaDTO mapearParaDTO(Categoria categoria) {
-        return new CategoriaDTO(categoria.getId(), categoria.getNome());
+        return new CategoriaDTO(
+                categoria.getId(),
+                categoria.getNome()
+        );
     }
 
     private Categoria buscarCategoria(Long id) {
-        return categoriaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Categoria com ID " + id + " não localizado"));
+        return categoriaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Categoria com ID " + id + " não localizado"));
     }
 
     private void atualizarDadosCategoria(Categoria categoria, CategoriaDTO dto) {

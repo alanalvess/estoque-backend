@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.projetointegrador</groupId>
-	<artifactId>backend</artifactId>
+	<artifactId>estoque-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>estoque</name>
 	<description>Projeto Integrador - Controle de Estoque</description>
@@ -105,8 +105,17 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>3.2.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
+
 
 </project>
